@@ -1,3 +1,5 @@
+--local MacLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/romblust/aaaaaa/refs/heads/main/leb"))()
+--local MacLib = loadstring(game:HttpGet("https://github.com/biggaboy212/Maclib/releases/latest/download/maclib.txt"))()
 local MacLib = { 
 	Options = {}, 
 	Folder = "Maclib", 
@@ -2363,8 +2365,8 @@ function MacLib:Window(Settings)
 						focused = false
 					end)
 
-					UserInputService.InputBegan:Connect(function(inp)
-                        if focused then return end
+					UserInputService.InputBegan:Connect(function(inp,proc)
+                        if proc then return end
 						if focused and not isBinding then
 							isBinding = true
 
