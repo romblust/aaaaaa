@@ -2340,109 +2340,110 @@ function MacLib:Window(Settings)
 
 					binderBox.Parent = keybind
 
-					local focused
-					local isBinding = false
-					local reset = false
-					local binded = KeybindFunctions.Settings.Default
-
-					local function resetFocusState()
-						focused = false
-						isBinding = false
-						binderBox:ReleaseFocus()
-					end
-
-					if binded then
-						binderBox.Text = binded.Name
-					end
-
-					binderBox.Focused:Connect(function()
-						focused = true
-					end)
-
-					binderBox.FocusLost:Connect(function()
-						focused = false
-					end)
-
-					UserInputService.InputBegan:Connect(function(inp)
-						if focused and not isBinding then
-							isBinding = true
-
-							local Event
-							Event = UserInputService.InputBegan:Connect(function(input)
-								if KeybindFunctions.Settings.Blacklist and (table.find(KeybindFunctions.KeybindFunctions.Settings.Blacklist, input.KeyCode) or table.find(KeybindFunctions.Settings.Blacklist, input.UserInputType)) then
-									binderBox:ReleaseFocus()
-									resetFocusState()
-									Event:Disconnect()
-									return
-								end
-
-								if input.UserInputType == Enum.UserInputType.Keyboard then
-									binded = input.KeyCode
-									binderBox.Text = input.KeyCode.Name
-								elseif input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.MouseButton2 then
-									binded = input.UserInputType
-									binderBox.Text = input.UserInputType.Name
-								end
-
-								if KeybindFunctions.Settings.onBinded then
-									KeybindFunctions.Settings.onBinded(binded)
-								end
-								reset = true
-								resetFocusState()
-								Event:Disconnect()
-							end)
-						else
-							if not reset and (inp.KeyCode == binded or inp.UserInputType == binded) then
-								if KeybindFunctions.Settings.Callback then
-									KeybindFunctions.Settings.Callback(binded)
-								end
-								if KeybindFunctions.Settings.onBindHeld then
-									KeybindFunctions.Settings.onBindHeld(true, binded)
-								end
-							else
-								reset = false
-							end
-						end
-					end)
-
-					UserInputService.InputEnded:Connect(function(inp)
-						if not focused and not isBinding then
-							if inp.KeyCode == binded or inp.UserInputType == binded then
-								if Settings.onBindHeld then
-									Settings.onBindHeld(false, binded)
-								end
-							end
-						end
-					end)
-
-					function KeybindFunctions:Bind(Key)
-						binded = Key
-						binderBox.Text = Key.Name
-					end
-
-					function KeybindFunctions:Unbind()
-						binded = nil
-						binderBox.Text = ""
-					end
-
-					function KeybindFunctions:GetBind()
-						return binded
-					end
-
-					function KeybindFunctions:UpdateName(Name)
-						keybindName = Name
-					end
-
-					function KeybindFunctions:SetVisibility(State)
-						keybind.Visible = State
-					end
-
-					if Flag then
-						MacLib.Options[Flag] = KeybindFunctions
-					end
-
-					return KeybindFunctions
-				end
+                    local focused
+                    local isBinding = false
+                    local reset = false
+                    local binded = KeybindFunctions.Settings.Default
+                    
+                    local function resetFocusState()
+                        focused = false
+                        isBinding = false
+                        binderBox:ReleaseFocus()
+                    end
+                    
+                    if binded then
+                        binderBox.Text = binded.Name
+                    end
+                    
+                    binderBox.Focused:Connect(function()
+                        focused = true
+                    end)
+                    
+                    binderBox.FocusLost:Connect(function()
+                        focused = false
+                    end)
+                    
+                    UserInputService.InputBegan:Connect(function(inp)
+                        if focused then return end
+                        
+                        if focused and not isBinding then
+                            isBinding = true
+                    
+                            local Event
+                            Event = UserInputService.InputBegan:Connect(function(input)
+                                if KeybindFunctions.Settings.Blacklist and (table.find(KeybindFunctions.KeybindFunctions.Settings.Blacklist, input.KeyCode) or table.find(KeybindFunctions.Settings.Blacklist, input.UserInputType)) then
+                                    binderBox:ReleaseFocus()
+                                    resetFocusState()
+                                    Event:Disconnect()
+                                    return
+                                end
+                    
+                                if input.UserInputType == Enum.UserInputType.Keyboard then
+                                    binded = input.KeyCode
+                                    binderBox.Text = input.KeyCode.Name
+                                elseif input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.MouseButton2 then
+                                    binded = input.UserInputType
+                                    binderBox.Text = input.UserInputType.Name
+                                end
+                    
+                                if KeybindFunctions.Settings.onBinded then
+                                    KeybindFunctions.Settings.onBinded(binded)
+                                end
+                                reset = true
+                                resetFocusState()
+                                Event:Disconnect()
+                            end)
+                        else
+                            if not reset and (inp.KeyCode == binded or inp.UserInputType == binded) then
+                                if KeybindFunctions.Settings.Callback then
+                                    KeybindFunctions.Settings.Callback(binded)
+                                end
+                                if KeybindFunctions.Settings.onBindHeld then
+                                    KeybindFunctions.Settings.onBindHeld(true, binded)
+                                end
+                            else
+                                reset = false
+                            end
+                        end
+                    end)
+                    
+                    UserInputService.InputEnded:Connect(function(inp)
+                        if not focused and not isBinding then
+                            if inp.KeyCode == binded or inp.UserInputType == binded then
+                                if Settings.onBindHeld then
+                                    Settings.onBindHeld(false, binded)
+                                end
+                            end
+                        end
+                    end)
+                    
+                    function KeybindFunctions:Bind(Key)
+                        binded = Key
+                        binderBox.Text = Key.Name
+                    end
+                    
+                    function KeybindFunctions:Unbind()
+                        binded = nil
+                        binderBox.Text = ""
+                    end
+                    
+                    function KeybindFunctions:GetBind()
+                        return binded
+                    end
+                    
+                    function KeybindFunctions:UpdateName(Name)
+                        keybindName = Name
+                    end
+                    
+                    function KeybindFunctions:SetVisibility(State)
+                        keybind.Visible = State
+                    end
+                    
+                    if Flag then
+                        MacLib.Options[Flag] = KeybindFunctions
+                    end
+                    
+                    return KeybindFunctions
 
 				function SectionFunctions:Dropdown(Settings, Flag)
 					local DropdownFunctions = { Settings = Settings, IgnoreConfig = false, Class = "Dropdown" }
