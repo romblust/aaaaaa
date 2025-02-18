@@ -1,4 +1,4 @@
---aaa
+--aa
 local MacLib = { 
 	Options = {}, 
 	Folder = "Maclib", 
@@ -2365,7 +2365,7 @@ function MacLib:Window(Settings)
 					end)
 
 					UserInputService.InputBegan:Connect(function(inp)
-                        if focused or not UserInputService:GetFocusedTextBox() or not isBinding then
+                        if focused and not isBinding then
 							isBinding = true
 
 							local Event
