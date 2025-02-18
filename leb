@@ -1,4 +1,4 @@
---aaa
+--aaaa
 local MacLib = { 
 	Options = {}, 
 	Folder = "Maclib", 
@@ -2340,78 +2340,88 @@ function MacLib:Window(Settings)
 					binderBoxUISizeConstraint.Parent = binderBox
 
 					binderBox.Parent = keybind
-                    
-                    local focused = false
-                    local isBinding = false
-                    local reset = false
-                    local binded = KeybindFunctions.Settings.Default
-                    
-                    local function resetFocusState()
-                        focused = false
-                        isBinding = false
-                        binderBox:ReleaseFocus()
+
+					local focused
+					local isBinding = false
+					local reset = false
+					local binded = KeybindFunctions.Settings.Default
+
+					local function resetFocusState()
+						focused = false
+						isBinding = false
+						binderBox:ReleaseFocus()
+					end
+
+					if binded then
+						binderBox.Text = binded.Name
+					end
+
+					binderBox.Focused:Connect(function()
+						focused = true
+					end)
+
+					binderBox.FocusLost:Connect(function()
+						focused = false
+					end)
+
+                    local function isChatting()
+                        local focusedBox = UserInputService:GetFocusedTextBox()
+                        return focusedBox and focusedBox ~= binderBox
                     end
-                    
-                    if binded then
-                        binderBox.Text = binded.Name
-                    end
-                    
-                    binderBox.Focused:Connect(function()
-                        focused = true
-                    end)
-                    
-                    binderBox.FocusLost:Connect(function()
-                        focused = false
-                    end)
                     
                     UserInputService.InputBegan:Connect(function(inp)
-                        if not binderBox:IsFocused() then
-                            if not isBinding then
-                                isBinding = true
+                        if isChatting() then return end
                     
-                                local Event
-                                Event = UserInputService.InputBegan:Connect(function(input)
-                                    if KeybindFunctions.Settings.Blacklist and 
-                                       (table.find(KeybindFunctions.Settings.Blacklist, input.KeyCode) or 
-                                        table.find(KeybindFunctions.Settings.Blacklist, input.UserInputType)) then
-                                        binderBox:ReleaseFocus()
-                                        resetFocusState()
-                                        Event:Disconnect()
-                                        return
-                                    end
+                        if focused and not isBinding then
+                            isBinding = true
                     
-                                    if input.UserInputType == Enum.UserInputType.Keyboard then
-                                        binded = input.KeyCode
-                                        binderBox.Text = input.KeyCode.Name
-                                    elseif input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.MouseButton2 then
-                                        binded = input.UserInputType
-                                        binderBox.Text = input.UserInputType.Name
-                                    end
-                    
-                                    if KeybindFunctions.Settings.onBinded then
-                                        KeybindFunctions.Settings.onBinded(binded)
-                                    end
-                                    reset = true
+                            local Event
+                            Event = UserInputService.InputBegan:Connect(function(input)
+                                if KeybindFunctions.Settings.Blacklist and 
+                                  (table.find(KeybindFunctions.Settings.Blacklist, input.KeyCode) or 
+                                   table.find(KeybindFunctions.Settings.Blacklist, input.UserInputType)) then
+                                    binderBox:ReleaseFocus()
                                     resetFocusState()
                                     Event:Disconnect()
-                                end)
-                            else
-                                if not reset and (inp.KeyCode == binded or inp.UserInputType == binded) then
-                                    if KeybindFunctions.Settings.Callback then
-                                        KeybindFunctions.Settings.Callback(binded)
-                                    end
-                                    if KeybindFunctions.Settings.onBindHeld then
-                                        KeybindFunctions.Settings.onBindHeld(true, binded)
-                                    end
-                                else
-                                    reset = false
+                                    return
                                 end
+                    
+                                if input.UserInputType == Enum.UserInputType.Keyboard then
+                                    binded = input.KeyCode
+                                    binderBox.Text = input.KeyCode.Name
+                                elseif input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.MouseButton2 then
+                                    binded = input.UserInputType
+                                    binderBox.Text = input.UserInputType.Name
+                                end
+                    
+                                if KeybindFunctions.Settings.onBinded then
+                                    KeybindFunctions.Settings.onBinded(binded)
+                                end
+                    
+                                reset = true
+                                resetFocusState()
+                                Event:Disconnect()
+                            end)
+                        else
+                            if isChatting() then return end
+                    
+                            if not reset and (inp.KeyCode == binded or inp.UserInputType == binded) then
+                                if KeybindFunctions.Settings.Callback then
+                                    KeybindFunctions.Settings.Callback(binded)
+                                end
+                                if KeybindFunctions.Settings.onBindHeld then
+                                    KeybindFunctions.Settings.onBindHeld(true, binded)
+                                end
+                            else
+                                reset = false
                             end
                         end
                     end)
                     
                     UserInputService.InputEnded:Connect(function(inp)
-                        if not binderBox:IsFocused() then
+                        if isChatting() then return end
+                    
+                        if not focused and not isBinding then
                             if inp.KeyCode == binded or inp.UserInputType == binded then
                                 if KeybindFunctions.Settings.onBindHeld then
                                     KeybindFunctions.Settings.onBindHeld(false, binded)
