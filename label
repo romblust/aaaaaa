@@ -2,6 +2,21 @@ if game:GetService("Players").LocalPlayer.PlayerGui.Bounty:FindFirstChild("Scree
     game:GetService("Players").LocalPlayer.PlayerGui.Bounty:FindFirstChild("ScreenGui"):Destroy()
 end
 if _G.Connection then _G.Connection:Disconnect() end
+function root(v)
+    if not v.Character:FindFirstChild(v.Name) then
+        if v.Character:FindFirstChild('HumanoidRootPart') then
+            return v.Character.HumanoidRootPart
+        else
+            return v.Character.UpperTorso
+        end
+    else
+        if not v.Character:FindFirstChild('HumanoidRootPart') then
+            return v.Character:FindFirstChild(v.Name).HumanoidRootPart
+        else
+            return v.Character.HumanoidRootPart
+        end
+    end
+end
 local screenGui = Instance.new("ScreenGui")
 screenGui.Parent = game:GetService("Players").LocalPlayer.PlayerGui.Bounty
 
@@ -72,6 +87,6 @@ pingStroke.Color = Color3.fromRGB(200, 200, 255)
 pingStroke.Parent = pingLabel
 
 _G.Connection = game:GetService("RunService").RenderStepped:Connect(function()
-    velocityLabel.Text = tostring(math.floor(game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart").Velocity.Magnitude or 0))
+    velocityLabel.Text = tostring(math.floor(root(game.Players.LocalPlayer).Velocity.Magnitude or 0))
     pingLabel.Text = game:GetService("Stats").Network.ServerStatsItem["Data Ping"]:GetValueString()
 end)
