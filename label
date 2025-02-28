@@ -21,7 +21,7 @@ local screenGui = Instance.new("ScreenGui")
 screenGui.Parent = game:GetService("Players").LocalPlayer.PlayerGui.Bounty
 
 local frame = Instance.new("Frame")
-frame.Size = UDim2.new(0, 270, 0, 40)
+frame.Size = UDim2.new(0, 360, 0, 40)
 frame.Position = UDim2.new(0.0500000007, 275, 0.0500000007, -93)
 frame.BackgroundColor3 = Color3.fromRGB(75, 0, 130)
 frame.BackgroundTransparency = 0.2
@@ -50,7 +50,7 @@ task.spawn(function()
 end)
 
 local velocityLabel = Instance.new("TextLabel")
-velocityLabel.Size = UDim2.new(0.3, 0, 1, 0)
+velocityLabel.Size = UDim2.new(0.22, 0, 1, 0)
 velocityLabel.Position = UDim2.new(0, 0, 0, 0)
 velocityLabel.BackgroundTransparency = 1
 velocityLabel.TextColor3 = Color3.new(1, 1, 1)
@@ -66,14 +66,14 @@ velocityStroke.Parent = velocityLabel
 
 local divider1 = Instance.new("Frame")
 divider1.Size = UDim2.new(0, 2, 0.7, 0)
-divider1.Position = UDim2.new(0.33, -1, 0.15, 0)
+divider1.Position = UDim2.new(0.23, -1, 0.15, 0)
 divider1.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 divider1.BackgroundTransparency = 0.4
 divider1.Parent = frame
 
 local pingLabel = Instance.new("TextLabel")
-pingLabel.Size = UDim2.new(0.3, 0, 1, 0)
-pingLabel.Position = UDim2.new(0.35, 0, 0, 0)
+pingLabel.Size = UDim2.new(0.22, 0, 1, 0)
+pingLabel.Position = UDim2.new(0.25, 0, 0, 0)
 pingLabel.BackgroundTransparency = 1
 pingLabel.TextColor3 = Color3.new(1, 1, 1)
 pingLabel.Font = Enum.Font.GothamBold
@@ -88,14 +88,14 @@ pingStroke.Parent = pingLabel
 
 local divider2 = Instance.new("Frame")
 divider2.Size = UDim2.new(0, 2, 0.7, 0)
-divider2.Position = UDim2.new(0.66, -1, 0.15, 0)
+divider2.Position = UDim2.new(0.48, -1, 0.15, 0)
 divider2.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
 divider2.BackgroundTransparency = 0.4
 divider2.Parent = frame
 
 local maxPlayerLabel = Instance.new("TextLabel")
-maxPlayerLabel.Size = UDim2.new(0.3, 0, 1, 0)
-maxPlayerLabel.Position = UDim2.new(0.68, 0, 0, 0)
+maxPlayerLabel.Size = UDim2.new(0.22, 0, 1, 0)
+maxPlayerLabel.Position = UDim2.new(0.50, 0, 0, 0)
 maxPlayerLabel.BackgroundTransparency = 1
 maxPlayerLabel.TextColor3 = Color3.new(1, 1, 1)
 maxPlayerLabel.Font = Enum.Font.GothamBold
@@ -108,8 +108,31 @@ maxPlayerStroke.Thickness = 1.2
 maxPlayerStroke.Color = Color3.fromRGB(200, 200, 255)
 maxPlayerStroke.Parent = maxPlayerLabel
 
+local divider3 = Instance.new("Frame")
+divider3.Size = UDim2.new(0, 2, 0.7, 0)
+divider3.Position = UDim2.new(0.73, -1, 0.15, 0)
+divider3.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+divider3.BackgroundTransparency = 0.4
+divider3.Parent = frame
+
+local dateTimeLabel = Instance.new("TextLabel")
+dateTimeLabel.Size = UDim2.new(0.22, 0, 1, 0)
+dateTimeLabel.Position = UDim2.new(0.75, 0, 0, 0)
+dateTimeLabel.BackgroundTransparency = 1
+dateTimeLabel.TextColor3 = Color3.new(1, 1, 1)
+dateTimeLabel.Font = Enum.Font.GothamBold
+dateTimeLabel.TextScaled = true
+dateTimeLabel.TextXAlignment = Enum.TextXAlignment.Left
+dateTimeLabel.Parent = frame
+
+local dateTimeStroke = Instance.new("UIStroke")
+dateTimeStroke.Thickness = 1.2
+dateTimeStroke.Color = Color3.fromRGB(200, 200, 255)
+dateTimeStroke.Parent = dateTimeLabel
+
 _G.Connection = game:GetService("RunService").RenderStepped:Connect(function()
     velocityLabel.Text = tostring(math.floor(root(game.Players.LocalPlayer).Velocity.Magnitude or 0))
     pingLabel.Text = game:GetService("Stats").Network.ServerStatsItem["Data Ping"]:GetValueString()
     maxPlayerLabel.Text = tostring(#game.Players:GetPlayers()) .. "/" .. tostring(game.Players.MaxPlayers)
+    dateTimeLabel.Text = os.date("%H:%M:%S")
 end)
