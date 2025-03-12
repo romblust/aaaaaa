@@ -1,4 +1,4 @@
-if game:GetService("CoreGui") then game:GetService("CoreGui"):FindFirstChild('ScreenGui'):Destroy() end
+if game:GetService("CoreGui"):FindFirstChild("ScreenGui") then game:GetService("CoreGui"):FindFirstChild("ScreenGui"):Destroy() end
 local InputService = game:GetService('UserInputService');
 local TextService = game:GetService('TextService');
 local CoreGui = game:GetService('CoreGui');
