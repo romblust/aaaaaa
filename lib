@@ -1,4 +1,4 @@
---1
+--2
 local InputService = game:GetService('UserInputService');
 local TextService = game:GetService('TextService');
 local CoreGui = game:GetService('CoreGui');
@@ -1211,12 +1211,7 @@ do
             KeyPicker.Changed = Callback
             Callback(KeyPicker.Value)
         end
-    
-local function isChatting()
-    local focusedBox = InputService:GetFocusedTextBox()
-    return focusedBox ~= nil
-end
-    
+
         if ParentObj.Addons then
             table.insert(ParentObj.Addons, KeyPicker)
         end
@@ -1232,85 +1227,84 @@ end
     
         local Picking = false;
     
-PickOuter.InputBegan:Connect(function(Input)
-    if isChatting() then return end
-    if Input.UserInputType == Enum.UserInputType.MouseButton1 and not Library:MouseIsOverOpenedFrame() then
-        Picking = true;
-
-        DisplayLabel.Text = '';
-
-        local Break;
-        local Text = '';
-
-        task.spawn(function()
-            while (not Break) do
-                if Text == '...' then
-                    Text = '';
-                end;
-
-                Text = Text .. '.';
-                DisplayLabel.Text = Text;
-
-                wait(0.4);
+        PickOuter.InputBegan:Connect(function(Input)
+            if InputService:GetFocusedTextBox() then return end
+            if Input.UserInputType == Enum.UserInputType.MouseButton1 and not Library:MouseIsOverOpenedFrame() then
+                Picking = true;
+        
+                DisplayLabel.Text = '';
+        
+                local Break;
+                local Text = '';
+        
+                task.spawn(function()
+                    while (not Break) do
+                        if Text == '...' then
+                            Text = '';
+                        end;
+        
+                        Text = Text .. '.';
+                        DisplayLabel.Text = Text;
+        
+                        wait(0.4);
+                    end;
+                end);
+        
+                wait(0.2);
+        
+                local Event;
+                Event = InputService.InputBegan:Connect(function(Input)
+                    local Key;
+        
+                    if Input.UserInputType == Enum.UserInputType.Keyboard then
+                        Key = Input.KeyCode.Name;
+                    elseif Input.UserInputType == Enum.UserInputType.MouseButton1 then
+                        Key = 'MB1';
+                    elseif Input.UserInputType == Enum.UserInputType.MouseButton2 then
+                        Key = 'MB2';
+                    end;
+        
+                    Break = true;
+                    Picking = false;
+        
+                    DisplayLabel.Text = Key;
+                    KeyPicker.Value = Key;
+        
+                    Library:SafeCallback(KeyPicker.ChangedCallback, Input.KeyCode or Input.UserInputType)
+                    Library:SafeCallback(KeyPicker.Changed, Input.KeyCode or Input.UserInputType)
+        
+                    Library:AttemptSave();
+        
+                    Event:Disconnect();
+                end);
+            elseif Input.UserInputType == Enum.UserInputType.MouseButton2 and not Library:MouseIsOverOpenedFrame() then
+                ModeSelectOuter.Visible = true;
             end;
         end);
-
-        wait(0.2);
-
-        local Event;
-        Event = InputService.InputBegan:Connect(function(Input)
-            local Key;
-
-            if Input.UserInputType == Enum.UserInputType.Keyboard then
-                Key = Input.KeyCode.Name;
-            elseif Input.UserInputType == Enum.UserInputType.MouseButton1 then
-                Key = 'MB1';
-            elseif Input.UserInputType == Enum.UserInputType.MouseButton2 then
-                Key = 'MB2';
-            end;
-
-            Break = true;
-            Picking = false;
-
-            DisplayLabel.Text = Key;
-            KeyPicker.Value = Key;
-
-            Library:SafeCallback(KeyPicker.ChangedCallback, Input.KeyCode or Input.UserInputType)
-            Library:SafeCallback(KeyPicker.Changed, Input.KeyCode or Input.UserInputType)
-
-            Library:AttemptSave();
-
-            Event:Disconnect();
-        end);
-    elseif Input.UserInputType == Enum.UserInputType.MouseButton2 and not Library:MouseIsOverOpenedFrame() then
-        ModeSelectOuter.Visible = true;
-    end;
-end);
-
-Library:GiveSignal(InputService.InputBegan:Connect(function(Input)
-    if isChatting() then return end
-    if (not Picking) then
-        if KeyPicker.Mode == 'Toggle' then
-            local Key = KeyPicker.Value;
-
-            if Key == 'MB1' or Key == 'MB2' then
-                if Key == 'MB1' and Input.UserInputType == Enum.UserInputType.MouseButton1
-                or Key == 'MB2' and Input.UserInputType == Enum.UserInputType.MouseButton2 then
-                    KeyPicker.Toggled = not KeyPicker.Toggled
-                    KeyPicker:DoClick()
+        
+        Library:GiveSignal(InputService.InputBegan:Connect(function(Input)
+            if InputService:GetFocusedTextBox() then return end
+            if (not Picking) then
+                if KeyPicker.Mode == 'Toggle' then
+                    local Key = KeyPicker.Value;
+        
+                    if Key == 'MB1' or Key == 'MB2' then
+                        if Key == 'MB1' and Input.UserInputType == Enum.UserInputType.MouseButton1
+                        or Key == 'MB2' and Input.UserInputType == Enum.UserInputType.MouseButton2 then
+                            KeyPicker.Toggled = not KeyPicker.Toggled
+                            KeyPicker:DoClick()
+                        end;
+                    elseif Input.UserInputType == Enum.UserInputType.Keyboard then
+                        if Input.KeyCode.Name == Key then
+                            KeyPicker.Toggled = not KeyPicker.Toggled;
+                            KeyPicker:DoClick()
+                        end;
+                    end;
                 end;
-            elseif Input.UserInputType == Enum.UserInputType.Keyboard then
-                if Input.KeyCode.Name == Key then
-                    KeyPicker.Toggled = not KeyPicker.Toggled;
-                    KeyPicker:DoClick()
-                end;
+        
+                KeyPicker:Update();
             end;
-        end;
-
-        KeyPicker:Update();
-    end;
-end))
-    
+        end))
         Library:GiveSignal(InputService.InputEnded:Connect(function(Input)
             if (not Picking) then
                 KeyPicker:Update();
