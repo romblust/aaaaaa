@@ -8,8 +8,9 @@ local OWNER  = Player.LocalPlayer
 local Workspace = service("Workspace")
 local ReplicatedStorage = service("ReplicatedStorage")
 local TweenService = service("TweenService")
-local MainEvent = ReplicatedStorage:WaitForChild("MainEvent")
-
+local Debris = service("Debris")
+--local MainEvent = ReplicatedStorage:WaitForChild("MainEvent")
+local ringid = 130036784222277
 local Handler = {}
 local Connections = {}
 
@@ -135,6 +136,32 @@ function Handler:CoreBypass()
     Weld.Part1 = OWNER.Character.HumanoidRootPart
     Weld.C0 = CFrame.new(0, 0, 0)
     return Core
+end
+
+function Handler:TypeParticle(ID: number)
+    local Object = game:GetObjects("rbxassetid://"..ID)
+    return Object
+end
+
+function Handler:SpawnParticle(ID: number, Name: string, Parent: Instance, Y: number)
+    local Object = game:GetObjects("rbxassetid://"..ID)
+    local RetrievedObject = Object[1]
+    local Attachment = Instance.new("Attachment", Parent)
+    Attachment.Name = Name
+    Attachment.Position = Vector3.new(0, Y, 0)
+    Handler:Pairs(RetrievedObject:GetChildren(), function(v)
+        v.Parent = Attachment  
+    end)
+end
+
+function Handler:DestroyParticle(Parent: any, Name: string)
+    if Parent:FindFirstChild(Name) then
+        Parent:FindFirstChild(Name):Destroy()
+    end
+end
+
+function Handler:AddDebris(Name: any, Duration: number)
+    Debris:AddItem(Name, Duration)
 end
 
 function Handler:Stop(Character: Model)
