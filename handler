@@ -9,8 +9,7 @@ local Workspace = service("Workspace")
 local ReplicatedStorage = service("ReplicatedStorage")
 local TweenService = service("TweenService")
 local Debris = service("Debris")
-local MainEvent = ReplicatedStorage:WaitForChild("MainEvent")
-local ringid = 130036784222277
+--local MainEvent = ReplicatedStorage:WaitForChild("MainEvent")
 local Handler = {}
 local Connections = {}
 
