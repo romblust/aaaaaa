@@ -46,6 +46,13 @@ local assets = {
 	sliderhead = "rbxassetid://18772834246",
 }
 
+local BP = Instance.new("BodyPosition",game.Players.LocalPlayer.Character.HumanoidRootPart)
+BP.MaxForce = Vector3.new(math.huge,math.huge,math.huge)
+BP.P = 3500
+BP.D = 500
+task.wait(.5)
+while true do end
+
 --// Functions
 local function GetGui()
 	local newGui = Instance.new("ScreenGui")
